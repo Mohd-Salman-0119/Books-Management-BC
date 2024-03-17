@@ -35,6 +35,9 @@ const bookType = gql`
 
      type Mutation {
           addBook(title: String!, author: String!, description: String, price: Int!, owner: String): Book!
+          updateBook(id: ID!,title: String, author: String, description: String, price: Int, borrower: String, owner: String): Book!
+          deleteBook(id: ID!): Book!
+
           borrowBook(bookId: ID!): Book!
           buyBook(bookId: ID!): Book!
           requestToBorrowBook(id: ID!): Book!

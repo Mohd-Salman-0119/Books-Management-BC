@@ -33,6 +33,38 @@ const getSingleBook = async (id) => {
      }
 }
 
+const deleteBookController = async (id) => {
+     try {
+          await BookModel.findByIdAndDelete(id);
+          return id;
+     } catch (error) {
+          throw new ApolloError(error.message, error.code);
+     }
+}
+const updateBookController = async (id, title, author, description, price, borrower, owner) => {
+     try {
+          const book = await BookModel.findById(id);
+
+          if (!book) {
+               throw new ApolloError("Book not found", "NOT_FOUND_BOOK")
+          }
+          book.title = title ? title : book.title,
+               book.author = author ? author : book.author,
+               book.description = description ? description : book.description,
+               book.price = price ? price : book.price,
+               book.borrower = borrower ? borrower : book.borrower,
+               book.owner = owner ? owner : book.owner
+
+          await book.save();
+
+          return book;
+
+     } catch (error) {
+          throw new ApolloError(error.message, error.code);
+
+     }
+}
+
 const addBookController = async (title, author, description, price, owner) => {
      try {
           console.log(title, author, description, price, owner)
@@ -54,11 +86,13 @@ const borrowBookController = async (bookId, user) => {
           if (!book) {
                throw new ApolloError("Book not found", 'NOT_FOUND_BOOK')
           }
+          
           if (!book.available) {
-               console.log(!book.available)
-               throw new ApolloError("Book is not available for borrowing", 'NOT_ABAILABLE_BOOK')
+               console.log("book available")
+               throw new ApolloError("Book is not available for borrowing", "NOT_ABAILABLE_BOOK")
+              
           }
-
+          
           book.owner = user._id
           book.available = false
           await book.save();
@@ -91,7 +125,7 @@ const buyBook = async (bookId, user) => {
 
           return book
      } catch (error) {
-          throw new ApolloError("Failed to but book", 'BUYING_FAILED')
+          throw new ApolloError("Failed to buy book", 'BUYING_FAILED')
      }
 }
 
@@ -168,11 +202,11 @@ const respondToBorrowRequest = async (input, user) => {
      }
 }
 
-// Helper function to check if a user is the owner of a book
 const userIsOwnerOfBook = async (bookId, userId) => {
      const book = await BookModel.findById(bookId);
      return book && book.owner.equals(userId);
 };
+
 
 module.exports = {
      addBookController,
@@ -181,5 +215,7 @@ module.exports = {
      borrowBookController,
      buyBook,
      requestToBorrowBook,
-     respondToBorrowRequest
+     respondToBorrowRequest,
+     updateBookController,
+     deleteBookController
 }

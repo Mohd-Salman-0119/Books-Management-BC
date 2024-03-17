@@ -1,4 +1,4 @@
-const { getAllBooks, getSingleBook, addBookController, borrowBookController, buyBook, requestToBorrowBook, respondToBorrowRequest } = require('../controllers/book.controller')
+const { getAllBooks, getSingleBook, addBookController, borrowBookController, buyBook, requestToBorrowBook, respondToBorrowRequest,updateBookController,deleteBookController } = require('../controllers/book.controller')
 const { createUser, getAllUsers, loginUser } = require('../controllers/user.controller')
 
 module.exports = {
@@ -11,5 +11,7 @@ module.exports = {
      borrowBookController,
      buyBook,
      requestToBorrowBook,
-     respondToBorrowRequest
+     respondToBorrowRequest,
+     deleteBookController,
+     updateBookController
 }

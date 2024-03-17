@@ -1,5 +1,5 @@
 const { ApolloError, bcrypt } = require('../imports/modules.imports')
-const { UserModel } = require('../imports/models.imports')
+const { UserModel, BookModel } = require('../imports/models.imports')
 const { generateToken } = require('../imports/config.imports')
 
 const createUser = async (username, email, password, role, books) => {
@@ -7,14 +7,26 @@ const createUser = async (username, email, password, role, books) => {
           const usernameExist = await UserModel.findOne({ username });
           const emailExist = await UserModel.findOne({ email });
 
-          if (usernameExist) {
-               throw new ApolloError("A user is already registered with the user " + username, "USERNAME_ALREADY_EXIST");
-          }
+          // if (usernameExist) {
+          //      throw new ApolloError("A user is already registered with the user " + username, "USERNAME_ALREADY_EXIST");
+          // }
           if (emailExist) {
                throw new ApolloError("A user is already registered with the email " + email, "EMAIL_ALREADY_EXIST");
           }
 
           const hashPassword = await bcrypt.hash(password, 10);
+
+          for (const book of books) {
+               const existingBook = await BookModel.findOne({ _id: book });
+               console.log(existingBook)
+               if (!existingBook) {
+                    throw new ApolloError(`Book with ID ${book} does not exist`, "BOOK_NOT_FOUND");
+               }
+               if (existingBook.available) {
+                    throw new ApolloError(`Book with ID ${book} is not available for purchase or like`, "BOOK_NOT_AVAILABLE");
+               }
+          }
+
 
           const newUser = new UserModel({
                username: username,

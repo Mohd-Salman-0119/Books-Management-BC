@@ -1,4 +1,5 @@
-const { addBookController, getAllBooks, getSingleBook, borrowBookController, buyBook, requestToBorrowBook, respondToBorrowRequest } = require('../../imports/controller.imports')
+const { addBookController, getAllBooks, getSingleBook, borrowBookController, buyBook, requestToBorrowBook, respondToBorrowRequest, updateBookController, deleteBookController } = require('../../imports/controller.imports')
+const { authMiddleware } = require("../../middleware/authenticate.middleware")
 
 
 const bookResolvers = {
@@ -12,9 +13,21 @@ const bookResolvers = {
      },
      Mutation: {
 
-          addBook: async (_, { title, author, description, price, owner }) => {
+          addBook: async (_, { title, author, description, price, owner }, context) => {
+               await authMiddleware("ADMIN")(context.user)
                return await addBookController(title, author, description, price, owner)
           },
+
+          updateBook: async (_, { id, title, author, description, price, borrower, owner }, context) => {
+               await authMiddleware("ADMIN")(context.user)
+               return updateBookController(id, title, author, description, price, borrower, owner)
+          },
+
+          deleteBook: async (_, { id }, context) => {
+               await authMiddleware("ADMIN")(context.user)
+               return deleteBookController(id);
+          },
+
           borrowBook: async (_, { bookId }, context) => {
                return borrowBookController(bookId, context.user)
           },

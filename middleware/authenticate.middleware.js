@@ -1,13 +1,13 @@
 
-const { GraphQLError } = require('../imports/modules.imports')
+const { ApolloError } = require('../imports/modules.imports')
 const authMiddleware = (role) => {
      return async (user) => {
           if (!user) {
-               throw new Error(`Your are are not authorize.`)
+               throw new ApolloError(`Your are are not authorize.`, "USER_UNAUTHENTICATED")
 
           }
           if (user.role != role) {
-               throw new Error(`Unauthorized: User role must be ${role}`)
+               throw new ApolloError(`Unauthorized: User role must be ${role}`, 'USER_UNAUHTORIZED')
           }
 
      }
