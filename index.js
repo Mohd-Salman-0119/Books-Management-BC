@@ -14,6 +14,7 @@ const resolvers = [userResolvers, bookResolvers]
 const server = new ApolloServer({
      typeDefs,
      resolvers,
+     introspection: true,
      context: async ({ req, res }) => {
           const user = await authorize(req, res).catch((err) => console.log(err));
           return { req, res, user };
